@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+int main()
+{
+    float notas[100], maiorNota = 0, menorNota = 10, somaNotas = 0, mediaGeral = 0, mediaReprovados = 0;
+    int contador = 0, aprovados = 0, reprovados = 0;
+    FILE *arquivoNotas, *resultado, *aprovadosArq, *reprovadosArq, *porcentagensArq;
+
+    arquivoNotas = fopen("Notas.txt", "r");
+    resultado = fopen("Resultado.txt", "w");
+    aprovadosArq = fopen("Aprovados.txt", "w");
+    reprovadosArq = fopen("Reprovados.txt", "w");
+    porcentagensArq = fopen("Porcentagens.txt", "w");
+
+    if (arquivoNotas == NULL)
+    {
+        printf("Erro ao abrir o arquivo de notas.\n");
+        return 1;
+    }
+
+    while(fscanf(arquivoNotas, "%f", &notas[contador]) == 1)
+    {
+        if (notas[contador] > maiorNota)
+            maiorNota = notas[contador];
+        if (notas[contador] < menorNota)
+            menorNota = notas[contador];
+        
+        somaNotas += notas[contador];
+        contador++;
+    }
+
+    fclose(arquivoNotas);
+
+    mediaGeral = somaNotas / contador;
+
+    for (int i = 0; i < contador; i++)
+    {
+        if (notas[i] >= mediaGeral)
+        {
+            aprovados++;
+        }
+        else
+        {
+            mediaReprovados += notas[i];
+            reprovados++;
+        }
+    }
+
+    if (reprovados > 0)
+    {
+        mediaReprovados /= reprovados;
+    }
+
+    fprintf(resultado, "Nota maxima: %.2f\nNota minima: %.2f\n", maiorNota, menorNota);
+    fprintf(aprovadosArq, "Numero de aprovados: %d\n", aprovados);
+    fprintf(reprovadosArq, "Media dos reprovados: %.2f\n", mediaReprovados);
+    fprintf(porcentagensArq, "Porcentagem dos aprovados: %.2f%%\nPorcentagem dos reprovados: %.2f%%\n", (float)aprovados/contador*100, (float)reprovados/contador*100);
+
+    fclose(resultado);
+    fclose(aprovadosArq);
+    fclose(reprovadosArq);
+    fclose(porcentagensArq);
+
+    return 0;
+}
